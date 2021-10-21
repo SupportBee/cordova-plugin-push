@@ -297,7 +297,8 @@ public class FCMService extends FirebaseMessagingService implements PushConstant
         if (value instanceof Bundle) {
           iterator = ((Bundle) value).keySet().iterator();
         } else {
-          iterator = (new JSONObject((String) value)).keys();
+          value = new JSONObject((String) value);
+          iterator = value.keys();
         }
         while (iterator.hasNext()) {
           String notifkey = iterator.next();
@@ -306,7 +307,12 @@ public class FCMService extends FirebaseMessagingService implements PushConstant
           String newKey = normalizeKey(notifkey, messageKey, titleKey, newExtras);
           Log.d(LOG_TAG, "replace key " + notifkey + " with " + newKey);
 
-          String valueData = value.getString(notifkey);
+          String valueData;
+          if (value instanceof Bundle) {
+            valueData = ((Bundle) value).getString(notifkey);
+          } else {
+            valueData = ((JSONObject) value).getString(notifkey);
+          }
           valueData = localizeKey(context, newKey, valueData);
 
           newExtras.putString(newKey, valueData);
