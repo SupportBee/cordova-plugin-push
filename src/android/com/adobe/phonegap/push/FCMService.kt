@@ -355,8 +355,13 @@ class FCMService : FirebaseMessagingService() {
           replaceKey(key, newKey, extras, newExtras)
         }
       } else if (key == "notification") {
-        val value = extras.getBundle(key)
-        val iterator: Iterator<String> = value!!.keySet().iterator()
+        val value = extras.get(key)
+        val iterator: Iterator<String>
+        if (value is String) {
+          iterator = JSONObject(value).keys()
+        } else {
+          iterator = value!!.keySet().iterator()
+        }
 
         while (iterator.hasNext()) {
           val notificationKey = iterator.next()
