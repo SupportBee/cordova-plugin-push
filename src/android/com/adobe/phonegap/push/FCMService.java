@@ -317,7 +317,11 @@ public class FCMService extends FirebaseMessagingService implements PushConstant
           if (value instanceof Bundle) {
             valueData = ((Bundle) value).getString(notifkey);
           } else {
-            valueData = ((JSONObject) value).getString(notifkey);
+            try {
+              valueData = ((JSONObject) value).getString(notifkey);
+            } catch (JSONException e) {
+              valueData = null;
+            }
           }
           valueData = localizeKey(context, newKey, valueData);
 
