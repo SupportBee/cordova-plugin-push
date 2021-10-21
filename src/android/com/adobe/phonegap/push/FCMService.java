@@ -297,8 +297,14 @@ public class FCMService extends FirebaseMessagingService implements PushConstant
         if (value instanceof Bundle) {
           iterator = ((Bundle) value).keySet().iterator();
         } else {
-          value = new JSONObject((String) value);
-          iterator = ((JSONObject) value).keys();
+          try {
+            value = new JSONObject((String) value);
+            iterator = ((JSONObject) value).keys();
+          } catch (JSONException e) {
+            Log.e(LOG_TAG, "normalizeExtras: extras.notification was a String, but not valid JSON");
+            newExtras.putString(key, (String) value);
+            continue;
+          }
         }
         while (iterator.hasNext()) {
           String notifkey = iterator.next();
